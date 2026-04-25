@@ -1,0 +1,45 @@
+stages:
+  prepare:
+    cmd: python src/data/ingest.py
+    deps:
+      - src/data/ingest.py
+      - src/utils/params.py
+      - params.yaml
+      - data/raw/dataset-tickets-multi-lang-4-20k.csv
+    params:
+      - data.raw_data_file
+      - data.language
+      - split.random_state
+      - split.test_size
+      - split.validation_size
+    outs:
+      - data/processed/train.csv
+      - data/processed/validation.csv
+      - data/processed/test.csv
+    metrics:
+      - artifacts/reports/eda_report.json
+  validate:
+    cmd: python src/data/validate.py
+    deps:
+      - src/data/validate.py
+      - data/processed/train.csv
+      - data/processed/validation.csv
+      - data/processed/test.csv
+    metrics:
+      - artifacts/reports/validation_report.json
+  train:
+    cmd: python src/training/train.py
+    deps:
+      - src/training/train.py
+      - src/inference/sklearn_predictor.py
+      - src/utils/params.py
+      - params.yaml
+      - data/processed/train.csv
+      - data/processed/validation.csv
+      - data/processed/test.csv
+    params:
+      - train.candidate_configs
+    outs:
+      - artifacts/models/ticket_priority_sklearn.joblib
+    metrics:
+      - artifacts/reports/training_report.json

@@ -1,0 +1,92 @@
+data:
+  raw_data_file: data/raw/dataset-tickets-multi-lang-4-20k.csv
+  language: en
+
+split:
+  random_state: 42
+  test_size: 0.15
+  validation_size: 0.15
+
+train:
+  candidate_configs:
+    - name: word_unigram_bigram
+      max_features: 30000
+      ngram_range: [1, 2]
+      c_value: 4.0
+      stop_words: english
+      min_df: 2
+      sublinear_tf: false
+    - name: word_unigram_bigram_high_c
+      max_features: 40000
+      ngram_range: [1, 2]
+      c_value: 8.0
+      stop_words: english
+      min_df: 2
+      sublinear_tf: false
+    - name: word_unigram_bigram_very_high_c
+      max_features: 50000
+      ngram_range: [1, 2]
+      c_value: 12.0
+      stop_words: english
+      min_df: 2
+      sublinear_tf: false
+    - name: word_bigram_sublinear
+      max_features: 50000
+      ngram_range: [1, 2]
+      c_value: 6.0
+      stop_words: english
+      min_df: 3
+      sublinear_tf: true
+    - name: word_trigram
+      max_features: 50000
+      ngram_range: [1, 3]
+      c_value: 6.0
+      stop_words: english
+      min_df: 2
+      sublinear_tf: false
+    - name: word_trigram_sublinear
+      max_features: 60000
+      ngram_range: [1, 3]
+      c_value: 8.0
+      stop_words: english
+      min_df: 3
+      sublinear_tf: true
+    - name: word_no_stopwords
+      max_features: 35000
+      ngram_range: [1, 2]
+      c_value: 4.0
+      stop_words: null
+      min_df: 2
+      sublinear_tf: false
+    - name: word_low_min_df
+      max_features: 60000
+      ngram_range: [1, 2]
+      c_value: 4.0
+      stop_words: english
+      min_df: 1
+      sublinear_tf: true
+    - name: char_wb_3_5
+      analyzer: char_wb
+      max_features: 70000
+      ngram_range: [3, 5]
+      c_value: 6.0
+      stop_words: null
+      min_df: 3
+      sublinear_tf: true
+    - name: char_wb_4_6
+      analyzer: char_wb
+      max_features: 90000
+      ngram_range: [4, 6]
+      c_value: 8.0
+      stop_words: null
+      min_df: 3
+      sublinear_tf: true
+    - name: char_wb_4_6
+      analyzer: char_wb
+      max_features: 90000
+      ngram_range: [4, 6]
+      c_value: 9.0
+      stop_words: null
+      min_df: 3
+      sublinear_tf: true
+
