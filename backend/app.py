@@ -69,6 +69,11 @@ class PredictionResponse(BaseModel):
     latency_ms: float
 
 
+class ModelInfoResponse(BaseModel):
+    model_uri: str
+    model_source: str
+
+
 class StubPriorityModel:
     def predict(self, payload: dict[str, str]) -> dict[str, Any]:
         text = f"{payload['subject']} {payload['body']}".lower()
@@ -77,10 +82,10 @@ class StubPriorityModel:
         medium_keywords = ("error", "issue", "cannot", "slow", "failed", "bug")
 
         if any(keyword in text for keyword in high_keywords):
-            return {"label": "high", "score": 0.91}
+            return {"label": "highx", "score": 0.91}
         if any(keyword in text for keyword in medium_keywords):
-            return {"label": "medium", "score": 0.76}
-        return {"label": "low", "score": 0.63}
+            return {"label": "mediumx", "score": 0.76}
+        return {"label": "lowx", "score": 0.63}
 
 
 class MLflowPriorityModel:
@@ -89,7 +94,6 @@ class MLflowPriorityModel:
 
     def predict(self, payload: dict[str, str]) -> dict[str, Any]:
         frame = pd.DataFrame([payload])
-        print("model_input_frame", frame)
         result = self.model.predict(frame)
 
         if hasattr(result, "to_dict"):
@@ -105,32 +109,33 @@ class MLflowPriorityModel:
 def load_priority_model():
     if mlflow is not None and os.getenv("MLFLOW_TRACKING_URI"):
         mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI"))
-        model_uri = f"models:/{REGISTERED_MODEL_NAME}/5"
+        model_uri = f"models:/{REGISTERED_MODEL_NAME}@{MODEL_ALIAS}"
 
         try:
-            print(f"Attempting to load MLflow model from {model_uri}...")
             model = MLflowPriorityModel(mlflow.pyfunc.load_model(model_uri))
             logger.info("model_loaded | model_uri=%s", model_uri)
-            print("MLflow model loaded successfully.")
-            return model, model_uri
+            return model, model_uri, "mlflow"
         except Exception:
-            logger.exception("mlflow_model_load_failed | using_next_fallback=true")
+            logger.exception(
+                "mlflow_model_load_failed | model_uri=%s | using_next_fallback=true",
+                model_uri,
+            )
 
     if LOCAL_MODEL_FILE.exists():
         try:
             model = LocalSklearnPredictor(LOCAL_MODEL_FILE)
             model_uri = str(LOCAL_MODEL_FILE)
             logger.info("model_loaded | model_uri=%s", model_uri)
-            return model, model_uri
+            return model, model_uri, "local"
         except Exception:
             logger.exception("local_model_load_failed | using_stub_model=true")
 
-    return StubPriorityModel(), "stub://ticket-priority-heuristic"
+    return StubPriorityModel(), "stub://ticket-priority-heuristic", "stub"
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    app.state.model, app.state.model_uri = load_priority_model()
+    app.state.model, app.state.model_uri, app.state.model_source = load_priority_model()
     yield
 
 
@@ -151,13 +156,12 @@ def health():
     return {"status": "ok"}
 
 
-@app.get("/model-info")
+@app.get("/model-info", response_model=ModelInfoResponse)
 def model_info():
-    return {
-        "registered_model_name": REGISTERED_MODEL_NAME,
-        "model_alias": MODEL_ALIAS,
-        "active_model_uri": app.state.model_uri,
-    }
+    return ModelInfoResponse(
+        model_uri=app.state.model_uri,
+        model_source=app.state.model_source,
+    )
 
 
 @app.post("/predict", response_model=PredictionResponse)
