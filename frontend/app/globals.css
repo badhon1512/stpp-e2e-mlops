@@ -1,0 +1,302 @@
+:root {
+  color: #18202f;
+  background: #f4f7fb;
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+.shell {
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 32px 0;
+}
+
+.workspaceHeader {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 22px;
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  color: #526079;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+h1 {
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  line-height: 1;
+}
+
+h2 {
+  font-size: 1rem;
+}
+
+.statusStrip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  max-width: 100%;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid #cfd7e5;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #3b465a;
+  font-size: 0.86rem;
+  white-space: normal;
+}
+
+.statusDot {
+  width: 9px;
+  height: 9px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: #1f9d63;
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(320px, 0.8fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.panel {
+  border: 1px solid #d7deea;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 12px 34px rgba(32, 45, 68, 0.08);
+}
+
+.ticketPanel {
+  display: grid;
+  gap: 18px;
+  padding: 22px;
+}
+
+.resultPanel {
+  display: grid;
+  gap: 18px;
+  min-height: 360px;
+  padding: 22px;
+}
+
+.panelHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #e6ebf2;
+}
+
+.panelHeader p {
+  margin-top: 4px;
+  color: #607089;
+  font-size: 0.92rem;
+}
+
+.field {
+  display: grid;
+  gap: 7px;
+  color: #2d374a;
+  font-weight: 700;
+}
+
+.field input,
+.field textarea {
+  width: 100%;
+  border: 1px solid #cbd4e2;
+  border-radius: 8px;
+  background: #fbfcfe;
+  color: #172033;
+  padding: 12px 13px;
+  outline: none;
+}
+
+.field textarea {
+  min-height: 220px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.field input:focus,
+.field textarea:focus {
+  border-color: #2e6fdb;
+  box-shadow: 0 0 0 3px rgba(46, 111, 219, 0.16);
+}
+
+.exampleRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.exampleRow button {
+  min-height: 34px;
+  border: 1px solid #cbd4e2;
+  border-radius: 8px;
+  background: #f6f8fb;
+  color: #263348;
+  cursor: pointer;
+  padding: 7px 11px;
+  font-weight: 700;
+}
+
+.submitButton {
+  min-height: 46px;
+  border: 0;
+  border-radius: 8px;
+  background: #2258b8;
+  color: #ffffff;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.submitButton:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.emptyState,
+.errorBox,
+.resultStack {
+  display: grid;
+  gap: 10px;
+}
+
+.emptyState,
+.errorBox {
+  color: #526079;
+  line-height: 1.5;
+}
+
+.emptyState strong,
+.errorBox strong {
+  color: #1d2636;
+}
+
+.errorBox {
+  border-left: 4px solid #c53434;
+  background: #fff5f5;
+  padding: 12px;
+}
+
+.priority {
+  display: grid;
+  gap: 6px;
+  border-radius: 8px;
+  padding: 18px;
+}
+
+.priority span,
+.metricGrid span,
+.modelBlock span {
+  color: #5f6e84;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.priority strong {
+  color: #111827;
+  font-size: 2.2rem;
+  line-height: 1;
+  text-transform: capitalize;
+}
+
+.priorityHigh {
+  background: #ffe9e9;
+  border: 1px solid #ffc5c5;
+}
+
+.priorityMedium {
+  background: #fff5d7;
+  border: 1px solid #f4d376;
+}
+
+.priorityLow {
+  background: #e8f7ef;
+  border: 1px solid #a9dfc0;
+}
+
+.metricGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.metricGrid div,
+.modelBlock {
+  display: grid;
+  gap: 7px;
+  border: 1px solid #e0e6ef;
+  border-radius: 8px;
+  padding: 13px;
+}
+
+.metricGrid strong {
+  font-size: 1.35rem;
+}
+
+.modelBlock code {
+  color: #172033;
+  font-size: 0.86rem;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 860px) {
+  .workspaceHeader {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .workspace {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .shell {
+    width: min(100% - 24px, 1180px);
+    padding: 20px 0;
+  }
+
+  .ticketPanel,
+  .resultPanel {
+    padding: 16px;
+  }
+
+  .metricGrid {
+    grid-template-columns: 1fr;
+  }
+}
