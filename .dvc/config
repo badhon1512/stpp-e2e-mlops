@@ -1,0 +1,4 @@
+[core]
+    remote = aws-storage
+['remote "aws-storage"']
+    url = s3://stpp/sttp

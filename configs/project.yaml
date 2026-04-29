@@ -1,0 +1,25 @@
+project:
+  name: support-ticket-priority-platform
+  task: text-classification
+  target: priority
+  language: en
+  dataset: tobiasbueck/multilingual-customer-support-tickets
+
+model:
+  architecture: tfidf-logistic-regression
+  vectorizer: tfidf
+  classifier: logistic-regression
+  model_file: artifacts/models/ticket_priority_sklearn.joblib
+  selection_metric: validation_macro_f1
+
+deployment:
+  backend: fastapi
+  frontend: nextjs-typescript
+  aws_target: ecs-fargate
+
+mlops:
+  tracking: mlflow
+  registry: mlflow-model-registry
+  validation: split-validation-report
+  tests: pytest
+  pipeline: dvc

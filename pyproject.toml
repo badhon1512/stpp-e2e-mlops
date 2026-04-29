@@ -1,0 +1,35 @@
+[project]
+name = "support-ticket-priority-platform"
+version = "0.1.0"
+description = "End-to-end MLOps project for support ticket priority classification."
+readme = "README.md"
+requires-python = ">=3.11,<3.12"
+dependencies = [
+    "dvc>=3.67.1",
+    "dvc-s3>=3.2.2",
+    "fastapi>=0.136.0",
+    "joblib>=1.5.2",
+    "mlflow>=3.11.1",
+    "pandas>=2.3.3",
+    "python-dotenv>=1.2.2",
+    "pyyaml>=6.0.3",
+    "scikit-learn>=1.8.0",
+    "tqdm>=4.67.1",
+    "uvicorn>=0.44.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "httpx>=0.28.1",
+    "pytest>=8.4.2",
+]
+
+[project.scripts]
+ticket-ingest = "src.data.ingest:main"
+ticket-validate = "src.data.validate:main"
+ticket-train = "src.training.train:main"
+ticket-api = "main:main"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
