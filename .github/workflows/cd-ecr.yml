@@ -1,0 +1,81 @@
+name: Publish Docker Images
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main", "master"]
+    tags: ["v*"]
+
+env:
+  BACKEND_IMAGE_NAME: ${{ vars.ECR_BACKEND_REPOSITORY || 'support-ticket-priority-backend' }}
+  FRONTEND_IMAGE_NAME: ${{ vars.ECR_FRONTEND_REPOSITORY || 'support-ticket-priority-frontend' }}
+
+jobs:
+  publish:
+    name: Build and push images to ECR
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Python dependencies
+        run: uv sync --extra dev
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Pull DVC artifacts from S3
+        run: uv run dvc pull
+
+      - name: Log in to Amazon ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build backend image
+        env:
+          ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -f Dockerfile.backend \
+            -t "$ECR_REGISTRY/$BACKEND_IMAGE_NAME:$IMAGE_TAG" \
+            -t "$ECR_REGISTRY/$BACKEND_IMAGE_NAME:latest" \
+            .
+
+      - name: Build frontend image
+        env:
+          ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build \
+            -t "$ECR_REGISTRY/$FRONTEND_IMAGE_NAME:$IMAGE_TAG" \
+            -t "$ECR_REGISTRY/$FRONTEND_IMAGE_NAME:latest" \
+            ./frontend
+
+      - name: Push backend image
+        env:
+          ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker push "$ECR_REGISTRY/$BACKEND_IMAGE_NAME:$IMAGE_TAG"
+          docker push "$ECR_REGISTRY/$BACKEND_IMAGE_NAME:latest"
+
+      - name: Push frontend image
+        env:
+          ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker push "$ECR_REGISTRY/$FRONTEND_IMAGE_NAME:$IMAGE_TAG"
+          docker push "$ECR_REGISTRY/$FRONTEND_IMAGE_NAME:latest"
