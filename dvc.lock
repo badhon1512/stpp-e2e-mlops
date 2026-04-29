@@ -92,8 +92,8 @@ stages:
       size: 1687
     - path: src/training/train.py
       hash: md5
-      md5: c33fa1752c148321f0365a0c30263691
-      size: 13833
+      md5: c47135974d78cf2b7051adbe13d6275a
+      size: 14074
     - path: src/utils/params.py
       hash: md5
       md5: 968a6dd0159b3be02b2856c0bc588ef2
@@ -206,9 +206,9 @@ stages:
     outs:
     - path: artifacts/models/ticket_priority_sklearn.joblib
       hash: md5
-      md5: 9233c1b383a438eff4aeefa9f01ccb8b
+      md5: 2b018a94a548764e5b160677973bd9e1
       size: 4185012
     - path: artifacts/reports/training_report.json
       hash: md5
-      md5: a5d890f9a6ad90994f8f963232ce08ae
+      md5: 08d5c81f629533f6b481ad012fbc8693
       size: 7026
