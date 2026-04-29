@@ -2,18 +2,21 @@ name: Publish Docker Images
 
 on:
   workflow_dispatch:
-  push:
+  workflow_run:
+    workflows: ["CI"]
     branches: ["main", "master"]
-    tags: ["v*"]
+    types:
+      - completed
 
 env:
-  BACKEND_IMAGE_NAME: ${{ vars.ECR_BACKEND_REPOSITORY || 'support-ticket-priority-backend' }}
-  FRONTEND_IMAGE_NAME: ${{ vars.ECR_FRONTEND_REPOSITORY || 'support-ticket-priority-frontend' }}
+  BACKEND_IMAGE_NAME: ${{ secrets.ECR_BACKEND_REPOSITORY }}
+  FRONTEND_IMAGE_NAME: ${{ secrets.ECR_FRONTEND_REPOSITORY }}
 
 jobs:
   publish:
     name: Build and push images to ECR
     runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - name: Check out repository
